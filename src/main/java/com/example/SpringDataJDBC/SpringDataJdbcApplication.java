@@ -8,9 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.xml.crypto.Data;
 import java.awt.desktop.SystemSleepEvent;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @SpringBootApplication
 public class SpringDataJdbcApplication implements CommandLineRunner {
@@ -135,34 +136,119 @@ public class SpringDataJdbcApplication implements CommandLineRunner {
 //		};
 //	}
 
-	@Bean
-	ApplicationRunner empTechRunner(EmployeeTechnologyRepository employeeTechnologyRepository){
+//	@Bean
+//	ApplicationRunner empTechRunner(EmployeeTechnologyRepository employeeTechnologyRepository){
+//
+//		return args -> {
+//
+//			Long technologyIdPython=employeeTechnologyRepository.findTechnologyByName("Python").getTechnologyId();
+//			Long technologyIdAzure=employeeTechnologyRepository.findTechnologyByName("Azure").getTechnologyId();
+//
+//			Integer employeeRoger=employeeTechnologyRepository.findEmployeeByName("Roger","Smith").getEmployeeId();
+//			Integer employeeAbby=employeeTechnologyRepository.findEmployeeByName("Abby","Cruz").getEmployeeId();
+//
+//			System.out.println("\n*******************\n");
+//
+//			EmployeeTechnology empTech = new EmployeeTechnology();
+//			empTech.setEmployeeId(employeeRoger);
+//			empTech.setTechnologyId(technologyIdPython);
+//
+//			System.out.println(employeeTechnologyRepository.save(empTech));
+//
+//			empTech=new EmployeeTechnology();
+//			empTech.setEmployeeId(employeeAbby);
+//			empTech.setTechnologyId(technologyIdAzure);
+//
+//			System.out.println(employeeTechnologyRepository.save(empTech));
+//
+//			System.out.println("\n*******************\n");
+//
+//
+//		};
+//	}
 
+	@Bean
+	ApplicationRunner officeRunner(OfficeRepository officeRepository){
 		return args -> {
 
-			Long technologyIdPython=employeeTechnologyRepository.findTechnologyByName("Python").getTechnologyId();
-			Long technologyIdAzure=employeeTechnologyRepository.findTechnologyByName("Azure").getTechnologyId();
+			System.out.println("\n**************\n");
 
-			Integer employeeRoger=employeeTechnologyRepository.findEmployeeByName("Roger","Smith").getEmployeeId();
-			Integer employeeAbby=employeeTechnologyRepository.findEmployeeByName("Abby","Cruz").getEmployeeId();
+//			System.out.println("Retrieving data for all offices:");
+//			for(Office office : officeRepository.findAll()){
+//				System.out.println(office);
+//			}
+//
+//			System.out.println("\nRetrieving data for one office:");
+//			System.out.println(officeRepository.findById(3L));
+//
+//			System.out.println("\nRetrieving data for many offices by ID:");
+//			List<Long> idsList = new ArrayList<Long>(Arrays.asList(4L,3L,1L));
+//			for(Office office : officeRepository.findAllById(idsList)){
+//				System.out.println(office);
+//			}
+//
+//			System.out.println("\nDoes an office with an ID for 2 exist?");
+//			System.out.println(officeRepository.existsById(2L));
+//
+//			System.out.println("\nRetrieving count of offices:");
+//			System.out.println(officeRepository.count());
 
 			System.out.println("\n*******************\n");
 
-			EmployeeTechnology empTech = new EmployeeTechnology();
-			empTech.setEmployeeId(employeeRoger);
-			empTech.setTechnologyId(technologyIdPython);
 
-			System.out.println(employeeTechnologyRepository.save(empTech));
+//			System.out.println("\nRetrieving Data by city:");
+//			System.out.println(officeRepository.findByCity("Munich, Germany"));
+//
+//			System.out.println("\nRetrieving Data by capacity:");
+//			System.out.println(officeRepository.findByCapacity(90));
+//
+//			System.out.println("\nRetrieving Data by city and capacity:");
+//			for(Office office: officeRepository.findByCityAndCapacity("Munich, Germany",30)){
+//				System.out.println(office);
+//			}
+//
+//			System.out.println("\nRetrieving Data by city or capacity:");
+//			for(Office office : officeRepository.findByCityOrCapacity("Munich, Germany",90)){
+//				System.out.println(office);
+//			}
 
-			empTech=new EmployeeTechnology();
-			empTech.setEmployeeId(employeeAbby);
-			empTech.setTechnologyId(technologyIdAzure);
+			System.out.println("\nUsing findByCapacityGreaterThan:");
+			for(Office office:officeRepository.findByCapacityGreaterThan(80)){
+				System.out.println(office);
+			}
 
-			System.out.println(employeeTechnologyRepository.save(empTech));
+			System.out.println("\nUsing findByCapacityGreaterThanEqualOrderByCapacity:");
+			for(Office office : officeRepository.findByCapacityGreaterThanEqualOrderByCapacity(80)){
+				System.out.println(office);
+			}
+
+			System.out.println("\nUsing findByCapacityBetween(50, 100):");
+			for(Office office: officeRepository.findByCapacityBetween(50,100)){
+				System.out.println(office);
+			}
+
+			Date refDate= new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2025");
+
+			System.out.println("\nUsing findByLeaseExpirationBefore:");
+			for(Office office : officeRepository.findByLeaseExpirationBefore(refDate)){
+				System.out.println(office);
+			}
+
+			System.out.println("\nUsing findByLeaseExpirationBetween:");
+			Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2026");
+			for(Office office : officeRepository.findByLeaseExpirationBetween(refDate,endDate)){
+				System.out.println(office);
+			}
+
+			System.out.println("\nUsing findFirstByOrderByLeaseExpiration:");
+			System.out.println(officeRepository.findFirstByOrderByLeaseExpiration());
+
+			System.out.println("\nUsing findFirstByCityOrderByLeaseExpiration:");
+			System.out.println(officeRepository.findFirstByCityOrderByLeaseExpiration("Munich, Germany"));
+
+
 
 			System.out.println("\n*******************\n");
-
-
 		};
 	}
 }
